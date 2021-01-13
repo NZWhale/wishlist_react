@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom'
+import AccountPage from './components/AccountPage';
+import FriendsList from './components/FriendsList';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+class App extends React.Component {
+    render() {
+        const history = this.props
+        return (
+            <Switch>
+                {/* <Route history={history} path='/login' component={LoginPage} /> */}
+                <Route history={history} path='/account' component={AccountPage} />
+                <Route history={history} path='/friendslist' component={FriendsList} />
+                <Redirect from='/' to='/friendslist' />
+            </Switch>
+        )
+    }
 }
 
-export default App;
+export default App
