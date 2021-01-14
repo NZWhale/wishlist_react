@@ -4,7 +4,6 @@ class AccountSettingsBlock extends React.Component {
     render() {
         return(
             <>
-            Hello world
             </>
         )
     }

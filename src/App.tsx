@@ -17,8 +17,9 @@ class App extends React.Component {
         const { activeItem } = this.state
         const history = this.props
         return (
-            <div>
+            <>
                 <BrowserRouter>
+
                     <Menu pointing>
                         <Menu.Item
                             name='Friends'
@@ -37,7 +38,7 @@ class App extends React.Component {
                         { activeItem === 'Friends' &&
                         <Menu.Menu position='right'>
                             <Menu.Item>
-                                <Input icon='search' placeholder='Search...' />
+                                <Input icon='users' iconPosition='left' placeholder='Search users...' />
                                 {/* TODO: create function to filter by friend's name */}
                             </Menu.Item>
                         </Menu.Menu>
@@ -60,8 +61,9 @@ class App extends React.Component {
                             <Redirect from='/' to='/friendslist' />
                         </Switch>
                     </Segment>
+
                 </BrowserRouter>
-            </div>
+            </>
         )
     }
 }
