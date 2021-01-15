@@ -12,7 +12,7 @@ class AddWishesBlock extends React.Component {
         return (
             <>
                 <ModalExampleModal />
-                <Segment style={{width: '39%'}}>
+                <Segment >
                     <WishesBlock wishes={this.users[0].wishes}/>
                 </Segment>
             </>
