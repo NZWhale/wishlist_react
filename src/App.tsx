@@ -1,67 +1,32 @@
 import * as React from 'react';
-import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import AccountPage from './components/AccountPage';
 import FriendsList from './components/FriendsList';
 import 'semantic-ui-css/semantic.min.css'
-import { Button, Input, Menu, Segment } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
+import LoginPage from './components/LoginPage';
 
 
 
 
 class App extends React.Component {
-    state = { activeItem: 'Friends' }
-
-    handleItemClick = (e: any, { name }: any) => this.setState({ activeItem: name })
+    state = { 
+        loggedInUser: 'Little'
+    }
 
     render() {
-        const { activeItem } = this.state
         const history = this.props
         return (
             <>
                 <BrowserRouter>
-
-                    <Menu pointing>
-                        <Menu.Item
-                            name='Friends'
-                            active={activeItem === 'Friends'}
-                            onClick={this.handleItemClick}
-                            as={Link}
-                            to="/friendslist"
-                        />
-                        <Menu.Item
-                            name='Account'
-                            active={activeItem === 'Account'}
-                            onClick={this.handleItemClick}
-                            as={Link}
-                            to="/account"
-                        />
-                        { activeItem === 'Friends' &&
-                        <Menu.Menu position='right'>
-                            <Menu.Item>
-                                <Input icon='users' iconPosition='left' placeholder='Search users...' />
-                                {/* TODO: create function to filter by friend's name */}
-                            </Menu.Item>
-                        </Menu.Menu>
-                        }
-                        { activeItem === 'Account' &&
-                        <Menu.Menu position='right'>
-                            <Menu.Item>
-                            <Button basic color='black'>Exit</Button>
-                            {/* TODO: create function to exit from account */}
-                            </Menu.Item>
-                        </Menu.Menu>
-                        }
-                    </Menu>
-
                     <Segment>
                         <Switch>
-                            {/* <Route history={history} path='/login' component={LoginPage} /> */}
-                            <Route history={history} path='/account' component={AccountPage} />
-                            <Route history={history} path='/friendslist' component={FriendsList} />
-                            <Redirect from='/' to='/friendslist' />
+                            <Route history={history} path='/login' render={() => (!this.state.loggedInUser ? <LoginPage /> : <Redirect to="/account" />)}/>
+                            <Route history={history} path='/account' render={() => (this.state.loggedInUser ? <AccountPage/> : <Redirect to="/login" />)}/>
+                            <Route history={history} path='/friendslist' render={() => (this.state.loggedInUser ? <FriendsList/> : <Redirect to="/login" />)}/>
+                            <Redirect from='/' to='/login' />
                         </Switch>
                     </Segment>
-
                 </BrowserRouter>
             </>
         )

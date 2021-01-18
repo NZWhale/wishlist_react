@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Accordion, Icon, Segment } from 'semantic-ui-react';
+import Header from '../Header';
 import AccountSettingsBlock from './AccountSettingsBlock';
 import AddFriendsBlock from './AddFriendsBlock';
 import AddWishesBlock from './AddWishesBlock';
@@ -20,6 +21,7 @@ class AccountPage extends React.Component {
 
         return (
             <>
+                <Header activeItem={"Account"}/>
                 <AddFriendsBlock />
 
                 <AccountSettingsBlock />
