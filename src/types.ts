@@ -15,6 +15,7 @@ export interface User {
 export interface StateInterface {
     users: Array<User>;
     loggedInUser: string;
+    loggedInStatus: boolean;
 }
 
 export default interface Action<T> {

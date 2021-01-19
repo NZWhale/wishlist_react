@@ -9,6 +9,8 @@ const reducer = (state = initialState, action: Action<any>): StateInterface => {
             return { ...state, users: action.payload}
         case "SET_LOGGED_IN_USER":
             return { ...state, loggedInUser: action.payload}
+        case "SET_LOGGED_STATUS":
+            return { ...state, loggedInStatus: action.payload}
     }
     return state
 }

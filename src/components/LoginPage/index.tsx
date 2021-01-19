@@ -1,7 +1,22 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Divider, Form, Grid, Segment } from 'semantic-ui-react';
+import setLoggedInStatus from '../../store/actionCreators/setLoggedStatus';
+import store from '../../store/store';
+import { StateInterface } from '../../types';
 
-class LoginPage extends React.Component {
+
+interface LoginPageProps {
+    loggedInUser: string;
+    loggedInStatus: boolean
+}
+
+class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
+    state={ 
+        login: "",
+        password: ""
+    }
     render() {
         return (
             <Segment placeholder>
@@ -13,6 +28,7 @@ class LoginPage extends React.Component {
                                 iconPosition='left'
                                 label='Username'
                                 placeholder='Username'
+                                onChange={(e) => this.setState({login: e.target.value})}
                             />
                             <Form.Input
                                 icon='lock'
@@ -21,7 +37,8 @@ class LoginPage extends React.Component {
                                 type='password'
                             />
 
-                            <Button content='Login' primary />
+                            <Button content='Login' primary 
+                                    onClick={() => store.dispatch(setLoggedInStatus(true))}/>
                         </Form>
                     </Grid.Column>
 
@@ -36,4 +53,10 @@ class LoginPage extends React.Component {
     }
 }
 
-export default LoginPage
+
+const mapStateToProps = (state: StateInterface): LoginPageProps => ({
+    loggedInUser: state.loggedInUser,
+    loggedInStatus: state.loggedInStatus
+})
+
+export default connect(mapStateToProps)(withRouter(LoginPage))

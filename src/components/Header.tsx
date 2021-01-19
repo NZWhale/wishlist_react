@@ -1,20 +1,32 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Input, Menu } from 'semantic-ui-react';
+import setLoggedInUser from '../store/actionCreators/setLoggedInUser';
+import setLoggedInStatus from '../store/actionCreators/setLoggedStatus';
+import store from '../store/store';
+import { StateInterface } from '../types';
 
-interface HeaderProps {
-    activeItem: string
+interface HeaderProps extends HeaderPropsFromState{
+    activeItem: string;
 }
 
-class Header extends React.Component<HeaderProps> {
+interface HeaderPropsFromState{
+    loggedInUser: string;
+}
+
+
+class Header extends React.Component<HeaderProps & RouteComponentProps> {
     state = { 
         activeItem: this.props.activeItem,
     }
 
     handleItemClick = (e: any, { name }: any) => this.setState({ activeItem: name })
+
     render() {
         const { activeItem } = this.state
-        return (
+        const { match, history } = this.props
+                return (
             <Menu pointing>
                         <Menu.Item
                             name='Friends'
@@ -41,7 +53,14 @@ class Header extends React.Component<HeaderProps> {
                         {activeItem === 'Account' &&
                             <Menu.Menu position='right'>
                                 <Menu.Item>
-                                    <Button basic color='black'>Exit</Button>
+                                    <Button basic 
+                                    color='black'
+                                    onClick={() => {
+                                        console.log(this.props.loggedInUser)
+                                        store.dispatch(setLoggedInStatus(false))
+                                        history.push('/login')
+                                    }}
+                                    >Exit</Button>
                                     {/* TODO: create function to exit from account */}
                                 </Menu.Item>
                             </Menu.Menu>
@@ -51,4 +70,9 @@ class Header extends React.Component<HeaderProps> {
     }
 }
 
-export default Header
+
+const mapStateToProps = (state: StateInterface): HeaderPropsFromState => ({
+    loggedInUser: state.loggedInUser
+})
+
+export default connect(mapStateToProps)(withRouter(Header))

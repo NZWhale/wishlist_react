@@ -17,7 +17,7 @@ class SingleWish extends React.Component<SingleWishProps> {
                         <Item>
                             <Item.Image size='tiny' src={this.props.wish.image ? this.props.wish.image : noImage} />
                             <Item.Content>
-                                <Item.Header as='string'>{this.props.wish.title ? this.props.wish.title : "null"}</Item.Header>
+                                <Item.Header as=''>{this.props.wish.title ? this.props.wish.title : "null"}</Item.Header>
                                 <Item.Description>
                                     {this.props.wish.comment ? this.props.wish.comment : "null"}
                                 </Item.Description>
