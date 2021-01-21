@@ -10,6 +10,7 @@ export interface User {
     username: string;
     dayOfBirth?: string;
     wishes?: Array<Wish>;
+    friends?: Array<User>
 }
 
 export interface StateInterface {
