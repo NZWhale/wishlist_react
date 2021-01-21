@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Button, Form, Header, Image, Input, Modal, Segment, TextArea } from 'semantic-ui-react';
@@ -26,7 +27,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
             <>
                 <ModalExampleModal loggedInUser={loggedInUser}/>
                 <Segment >
-                    <WishesBlock wishes={users[0].wishes} />
+                    <WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>
                 </Segment>
             </>
         )
@@ -112,6 +113,7 @@ return (
                         body: JSON.stringify({
                             user: loggedInUser,
                             wish: {
+                                id: nanoid(),
                                 image: image,
                                 title: title,
                                 url: url,

@@ -33,7 +33,7 @@ class OneFriendWishes extends React.Component<OneFriendsWishesProps> {
                     {this.props.user.username}
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex === 2}>
-                    <WishesBlock wishes={this.props.user.wishes ? this.props.user.wishes : []} />
+                    <WishesBlock wishes={this.props.user.wishes ? this.props.user.wishes : []} isLoggedInUser={false}/>
                 </Accordion.Content>
                 </Accordion>
             </div>

@@ -1,21 +1,31 @@
 import * as React from 'react';
-import { Wish } from '../../types';
+import { StateInterface, Wish } from '../../types';
 import noImage from '../../images/noImage.jpg';
-import { Item, Segment } from 'semantic-ui-react';
+import { Button, Item, Segment } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { deleteWishUrl } from '../../utils';
+import store from '../../store/store';
+import setUsersAction from '../../store/actionCreators/setUsersAction';
 
 
 interface SingleWishProps {
     wish: Wish
+    isLoggedInUser: boolean
 }
 
-class SingleWish extends React.Component<SingleWishProps> {
+interface PropsFromState {
+    loggedInUser: string
+}
+
+class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
     render() {
-        const {image, title, url, comment} = this.props.wish
+        const { isLoggedInUser, loggedInUser } = this.props
+        const { id, image, title, url, comment } = this.props.wish
         return (
             <>
                 <Segment vertical>
                     <Item.Group>
-                        <Item>
+                        <Item id={id}>
                             <Item.Image size='tiny' src={image ? image : noImage} />
                             <Item.Content>
                                 <Item.Header as=''>{title ? title : "null"}</Item.Header>
@@ -23,6 +33,27 @@ class SingleWish extends React.Component<SingleWishProps> {
                                     {comment ? comment : "null"}
                                 </Item.Description>
                                 <Item.Extra src={url ? url : "null"}>{url ? url : "null"}</Item.Extra>
+                                {isLoggedInUser &&
+                                    <>
+                                        <Button style={{marginTop:"10px"}} 
+                                                basic 
+                                                size="mini" 
+                                                color="red" 
+                                                icon="remove"
+                                                onClick={() => {
+                                                    fetch(deleteWishUrl, {
+                                                    method: "POST",
+                                                    body: JSON.stringify({
+                                                        user: loggedInUser,
+                                                        id: id,
+                                                    }),
+                                                    headers: {"Content-Type": "application/json"},
+                                                }).then(response => response.json())
+                                                .then(data => store.dispatch(setUsersAction(data)))
+                                            }}/> 
+                                        {/* <Button style={{marginTop:"10px"}} basic size="mini" color="green" icon="edit outline"/>  */}
+                                    </>
+                                }
                             </Item.Content>
                         </Item>
                     </Item.Group>
@@ -32,4 +63,8 @@ class SingleWish extends React.Component<SingleWishProps> {
     }
 }
 
-export default SingleWish
+const mapStateToProps = (state: StateInterface): PropsFromState => ({
+    loggedInUser: state.loggedInUser,
+})
+
+export default connect(mapStateToProps)(SingleWish)

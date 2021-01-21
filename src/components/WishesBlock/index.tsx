@@ -6,12 +6,14 @@ import SingleWish from './SingleWish';
 
 interface WishesBlockProps {
     wishes: Array<Wish> 
+    isLoggedInUser: boolean
 }
 
 class WishesBlock extends React.Component<WishesBlockProps> {
     render() {
+        const { isLoggedInUser} = this.props
         const wishesList = this.props.wishes.map((wish: Wish) =>
-            <SingleWish wish={wish} />
+            <SingleWish wish={wish} isLoggedInUser={isLoggedInUser}/>
             )
         return(
             <>

@@ -33,7 +33,6 @@ app.get('/getfriends', (req, res) => {
 
 //---------------------------------------------------
 
-// This are handlers for getting and sending wishes to DB
 app.post('/addwish', (req, res) => {
     const newWish = req.body.wish
     const user = req.body.user.loggedInUser
@@ -48,6 +47,31 @@ app.post('/addwish', (req, res) => {
         fs.writeFile('data/DB.json', data, (err) => {
             if (err) throw err
             console.log('The file has been saved!')
+            res.send(data)
+        })
+    } else {
+        fs.mkdirSync("data")
+        fs.writeFile('data/DB.json', [])
+    }
+})
+app.post('/deletewish', (req, res) => {
+    const wishId = req.body.id
+    const user = req.body.user
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        users.forEach(u => {
+            if (u.username === user) {
+                u.wishes.forEach((wish, index) => {
+                    if(wish.id === wishId){
+                        u.wishes.splice(index, 1)
+                    }
+                })
+            }
+        })
+        const data = JSON.stringify(users)
+        fs.writeFile('data/DB.json', data, (err) => {
+            if (err) throw err
+            console.log('The file has been deleted!')
             res.send(data)
         })
     } else {

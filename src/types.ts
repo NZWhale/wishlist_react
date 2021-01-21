@@ -1,4 +1,5 @@
 export interface Wish {
+    id: string;
     image: string|null;
     title: string;
     url?: string;
