@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Button, Form, Header, Image, Input, Modal, Segment, TextArea } from 'semantic-ui-react';
 import { InputFile } from 'semantic-ui-react-input-file'
 import noImage from '../../images/noImage.jpg';
+import setUsersAction from '../../store/actionCreators/setUsersAction';
+import store from '../../store/store';
 import { StateInterface, User } from '../../types';
 import WishesBlock from '../WishesBlock';
 
@@ -39,28 +41,6 @@ function ModalExampleModal(loggedInUser: any) {
         comment: "",
     }
 
-    
-
-    const fetchNewWish = () => {
-        const headers = {
-            "Content-Type": "application/json"
-        }
-
-        const response = fetch(addWishUrl, {
-            method: "POST",
-            body: JSON.stringify({
-                user: loggedInUser,
-                wish: state
-            }),
-            headers: headers,
-        }).then(response => {
-            return response.json()
-        }, err => {
-            // console.error
-            console.log(err, "data wasn't wrote")
-            throw err
-        })
-    }
 
 return (
     <Modal
@@ -119,7 +99,15 @@ return (
                 labelPosition='right'
                 icon='checkmark'
                 onClick={() => {
-                    fetchNewWish()
+                    fetch(addWishUrl, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            user: loggedInUser,
+                            wish: state
+                        }),
+                        headers: {"Content-Type": "application/json"},
+                    }).then(response => response.json())
+                    .then(data => store.dispatch(setUsersAction(data)))
                     setOpen(false)
                 }}
                 positive
