@@ -5,7 +5,7 @@ import Header from '../Header';
 import SingleWish from './SingleWish';
 
 interface WishesBlockProps {
-    wishes: Array<Wish>
+    wishes: Array<Wish> 
 }
 
 class WishesBlock extends React.Component<WishesBlockProps> {

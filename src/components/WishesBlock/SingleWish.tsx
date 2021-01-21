@@ -10,18 +10,19 @@ interface SingleWishProps {
 
 class SingleWish extends React.Component<SingleWishProps> {
     render() {
+        const {image, title, url, comment} = this.props.wish
         return (
             <>
                 <Segment vertical>
                     <Item.Group>
                         <Item>
-                            <Item.Image size='tiny' src={this.props.wish.image ? this.props.wish.image : noImage} />
+                            <Item.Image size='tiny' src={image ? image : noImage} />
                             <Item.Content>
-                                <Item.Header as=''>{this.props.wish.title ? this.props.wish.title : "null"}</Item.Header>
+                                <Item.Header as=''>{title ? title : "null"}</Item.Header>
                                 <Item.Description>
-                                    {this.props.wish.comment ? this.props.wish.comment : "null"}
+                                    {comment ? comment : "null"}
                                 </Item.Description>
-                                <Item.Extra src={this.props.wish.url ? this.props.wish.url : "null"}>{this.props.wish.url ? this.props.wish.url : "null"}</Item.Extra>
+                                <Item.Extra src={url ? url : "null"}>{url ? url : "null"}</Item.Extra>
                             </Item.Content>
                         </Item>
                     </Item.Group>

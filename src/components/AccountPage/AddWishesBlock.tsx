@@ -6,9 +6,10 @@ import noImage from '../../images/noImage.jpg';
 import setUsersAction from '../../store/actionCreators/setUsersAction';
 import store from '../../store/store';
 import { StateInterface, User } from '../../types';
+import { addWishUrl } from '../../utils';
 import WishesBlock from '../WishesBlock';
 
-const addWishUrl = "http://localhost:3001/addwish"
+
 
 interface AddWishesBlockProps {
     users: Array<User>
@@ -17,7 +18,7 @@ interface AddWishesBlockProps {
 
 class AddWishesBlock extends React.Component<AddWishesBlockProps> {
     handleUpload = console.log("1")
-    user = [{ "image": "undefined", "username": "test", "dayOfBirth": "01.01.1970", "wishes": [{ "title": "test", "url": "https://test.com", "comment": "test comment" }, { "title": "test2", "url": "https://test2.com", "comment": "second test comment" }] }]
+    user = [{ "image": "undefined", "username": "test", "dayOfBirth": "01.01.1970", "wishes": [{ "img":"null", "title": "test", "url": "https://test.com", "comment": "test comment" }, { "img":"null", "title": "test2", "url": "https://test2.com", "comment": "second test comment" }] }]
 
     render() {
         const { users, loggedInUser } = this.props
@@ -25,7 +26,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
             <>
                 <ModalExampleModal loggedInUser={loggedInUser}/>
                 <Segment >
-                    <WishesBlock wishes={users[0].wishes ? users[0].wishes : this.user[0].wishes} />
+                    <WishesBlock wishes={users[0].wishes} />
                 </Segment>
             </>
         )
@@ -34,13 +35,20 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
 
 function ModalExampleModal(loggedInUser: any) {
     const [open, setOpen] = React.useState(false)
-    const state = {
-        img: "",
-        title: "",
-        url: "",
-        comment: "",
-    }
+    const [image, setImage] = React.useState<string|null|ArrayBuffer>(null)
+    const [title, setTitle] = React.useState("")
+    const [url, setUrl] = React.useState("")
+    const [comment, setComment] = React.useState("")
 
+    function encodeImageFileAsURL(element: any) {
+        var file = element.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          console.log('RESULT', reader.result)
+          setImage(reader.result)
+        }
+        reader.readAsDataURL(file);
+      }
 
 return (
     <Modal
@@ -53,13 +61,13 @@ return (
         <Modal.Content image>
             <Segment>
                 <div style={{ marginLeft: '15%' }}>
-                    <Image size='medium' style={{ paddingRight: '10px', paddingBottom: '10px' }} src={noImage} wrapped />
+                    <Image size='medium' style={{ paddingRight: '10px', paddingBottom: '10px' }} src={image?image:noImage} wrapped />
                     <InputFile
 
                         button={undefined}
                         input={{
                             id: 'input-control-id',
-                            onChange: () => (console.log(1))
+                            onChange: (e: any) => (encodeImageFileAsURL(e.target))
                         }}
                     />
                 </div>
@@ -71,13 +79,13 @@ return (
                             control={Input}
                             label='Title'
                             placeholder='Title'
-                            onChange={(e: any) => (state.title = e.target.value)}
+                            onChange={(e: any) => (setTitle(e.target.value))}
                         />
                         <Form.Field
                             control={Input}
                             label='Url'
                             placeholder='Optional'
-                            onChange={(e: any) => (state.url = e.target.value)}
+                            onChange={(e: any) => (setUrl(e.target.value))}
                         />
                     </Form.Group>
 
@@ -85,7 +93,7 @@ return (
                         control={TextArea}
                         label='Description'
                         placeholder='Enter comment... Optional'
-                        onChange={(e: any) => (state.comment = e.target.value)}
+                        onChange={(e: any) => (setComment(e.target.value))}
                     />
                 </Form>
             </Modal.Description>
@@ -103,7 +111,12 @@ return (
                         method: "POST",
                         body: JSON.stringify({
                             user: loggedInUser,
-                            wish: state
+                            wish: {
+                                image: image,
+                                title: title,
+                                url: url,
+                                comment: comment,
+                            }
                         }),
                         headers: {"Content-Type": "application/json"},
                     }).then(response => response.json())

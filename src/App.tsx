@@ -9,9 +9,8 @@ import { connect } from 'react-redux';
 import { StateInterface } from './types';
 import setUsersAction from './store/actionCreators/setUsersAction';
 import store from './store/store';
+import { getFriendsListUtl } from './utils';
 
-
-const getFriendsListUtl = "http://localhost:3001/getfriends"
 
 interface AppProps {
     loggedInUser: string;

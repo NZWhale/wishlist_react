@@ -17,10 +17,9 @@ const usersFilePath = "./data/users.json"
 
 app.use(cors());
 app.use(cookieParser())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(path.resolve() + '/'))
-app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
 // This handler for getting all friends
 app.get('/getfriends', (req, res) => {
