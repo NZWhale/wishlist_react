@@ -12,7 +12,10 @@ interface HeaderProps extends HeaderPropsFromState{
 }
 
 interface HeaderPropsFromState{
-    loggedInUser: string;
+    loggedInUser: {
+        username: string;
+        id: string;
+    }
 }
 
 

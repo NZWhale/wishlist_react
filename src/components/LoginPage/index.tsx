@@ -3,14 +3,19 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Divider, Form, Grid, Icon, Message, Modal, Segment } from 'semantic-ui-react';
+import setLoggedInUser from '../../store/actionCreators/setLoggedInUser';
 import setLoggedInStatus from '../../store/actionCreators/setLoggedStatus';
+import setUsersAction from '../../store/actionCreators/setUsersAction';
 import store from '../../store/store';
 import { StateInterface } from '../../types';
-import { registrationUrl } from '../../utils';
+import { loginUrl, registrationUrl } from '../../utils';
 
 
 interface LoginPageProps {
-    loggedInUser: string;
+    loggedInUser: {
+        username: string;
+        id: string;
+    }
     loggedInStatus: boolean
 }
 
@@ -37,10 +42,31 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
                                 iconPosition='left'
                                 label='Password'
                                 type='password'
+                                onChange={(e) => {
+                                    this.setState({ password: e.target.value })
+                                }}
                             />
 
                             <Button content='Login' primary
-                                onClick={() => store.dispatch(setLoggedInStatus(true))} />
+                                onClick={() => {
+                                    console.log(this.state.password)
+                                    fetch(loginUrl, {
+                                        method: "POST",
+                                        body: JSON.stringify({
+                                            email: this.state.login,
+                                            password: this.state.password
+                                        }),
+                                        headers: {"Content-Type": "application/json"},
+                                    }).then(response => {
+                                        if(response.status === 200) {
+                                            const data = response.json()
+                                            data.then(data => store.dispatch(setLoggedInUser(data)))
+                                            store.dispatch(setLoggedInStatus(true))
+                                        } else if(response.status === 401){
+                                            alert("Invalid credentials")
+                                        }
+                                    })
+                                }} />
                         </Form>
                     </Grid.Column>
 

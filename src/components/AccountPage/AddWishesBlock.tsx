@@ -15,7 +15,10 @@ import EmptyWishComponent from '../WishesBlock/EmptyWishComponent';
 
 interface AddWishesBlockProps {
     users: Array<User>
-    loggedInUser: string
+    loggedInUser: {
+        username: string
+        id: string
+    }
 }
 
 class AddWishesBlock extends React.Component<AddWishesBlockProps> {
@@ -26,7 +29,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
         const { users, loggedInUser } = this.props
         return (
             <>
-                <NewWishModal loggedInUser={loggedInUser}/>
+                <NewWishModal loggedInUser={loggedInUser.username}/>
                 <Segment >
                     {users[0]?<WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
                 </Segment>

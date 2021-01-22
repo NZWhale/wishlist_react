@@ -16,7 +16,10 @@ export interface User {
 
 export interface StateInterface {
     users: Array<User>;
-    loggedInUser: string;
+    loggedInUser: {
+        username: string,
+        id: string
+    };
     loggedInStatus: boolean;
 }
 

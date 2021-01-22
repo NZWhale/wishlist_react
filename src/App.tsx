@@ -13,7 +13,10 @@ import { getFriendsListUtl } from './utils';
 
 
 interface AppProps {
-    loggedInUser: string;
+    loggedInUser: {
+        username: string;
+        id: string;
+    }
     loggedInStatus: boolean
 }
 

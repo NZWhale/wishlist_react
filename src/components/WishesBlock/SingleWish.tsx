@@ -15,7 +15,10 @@ interface SingleWishProps {
 }
 
 interface PropsFromState {
-    loggedInUser: string
+    loggedInUser: {
+        username: string;
+        id: string;
+    }
 }
 
 class SingleWish extends React.Component<SingleWishProps & PropsFromState> {

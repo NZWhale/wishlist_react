@@ -85,14 +85,14 @@ app.post('/deletewish', (req, res) => {
 app.post('/registration', (req, res) => {
     const user = req.body
     if (fs.existsSync(dataPath)) {
-        if (fs.existsSync("data/users.json")) {
-            const users = JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
+        if (fs.existsSync(usersFilePath)) {
+            const users = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"))
             const userFound = users.find(singleUser => singleUser.id === user.id || singleUser.email === user.email)
             if (userFound) {
                 console.log("user already exist")
                 res.status(404).send("user already exist")
             } else {
-                user.password = nanoid.nanoid()
+                user.password = nanoid.nanoid(8)
                 sendAccountDetails(user.email, user.username, user.password)
                 users.push(user)
                 fs.writeFile('data/users.json', JSON.stringify(users), (err) => {
@@ -111,6 +111,51 @@ app.post('/registration', (req, res) => {
     }
 })
 
+const generateAuthToken = () => {
+    const tokenLength = 16
+    let result = ""
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const charactersLength = characters.length
+    for (let i = 0; i < tokenLength; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
+}
+
+let authorisedUsers = {}
+
+const findUserByLogin = (userLogin) => {
+    const users = JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
+    return users.find(({email}) => email === userLogin)
+}
+
+app.post('/login', (req, res) => {
+    const user = req.body;
+    if (!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath)
+    }
+    if (!fs.existsSync(usersFilePath)) {
+        fs.writeFileSync(usersFilePath, "[]")
+    }
+    const userFound = findUserByLogin(user.email)
+    if (userFound && userFound.password === user.password) {
+        const userData = {
+            "username": userFound.username,
+            "id": userFound.id
+        }
+        console.log("login successful")
+        const cookieAge = 24 * 60 * 60 * 1000
+        const authToken = generateAuthToken()
+        authorisedUsers[authToken] = userFound.login
+        res.cookie('auth-token', authToken, {maxAge: cookieAge, httpOnly: false})
+        res.status(200).send(userData)
+    } else {
+        console.log("user not found")
+        res.status(401).send("user not found")
+    }
+})
+
+
 function sendAccountDetails(email, username, pass){
     let transporter = nodemailer.createTransport({
         service: 'Gmail',
@@ -124,11 +169,8 @@ function sendAccountDetails(email, username, pass){
         from: user,
         to: email,
         subject: "Doobki's Wish List",
-        text: `Dear ${username}, you have registered in the Doobki's Wish List. 
-        Your login is "${email}", your password is "${pass}". Don't lose them`
+        text: `Dear ${username}, you have registered in the Doobki's Wish List. Your login is "${email}", your password is "${pass}". Don't lose them`
     };
-
-
 
     transporter.sendMail(mailDetails, function (err, data) {
         if (err) {

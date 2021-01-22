@@ -2,7 +2,10 @@ import {StateInterface} from '../types'
 
 const initialState: StateInterface = {
     users: [],
-    loggedInUser: "littlewhale",
+    loggedInUser: {
+        username: "",
+        id: ""
+    },
     loggedInStatus: false
 }
 
