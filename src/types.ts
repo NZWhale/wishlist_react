@@ -7,6 +7,7 @@ export interface Wish {
 }
 
 export interface User {
+    id: string
     image?: string|null;
     username: string;
     dayOfBirth?: string;

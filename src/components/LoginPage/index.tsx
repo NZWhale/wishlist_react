@@ -49,14 +49,13 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
 
                             <Button content='Login' primary
                                 onClick={() => {
-                                    console.log(this.state.password)
                                     fetch(loginUrl, {
                                         method: "POST",
                                         body: JSON.stringify({
                                             email: this.state.login,
                                             password: this.state.password
                                         }),
-                                        headers: {"Content-Type": "application/json"},
+                                        headers: {"Content-Type": "application/json", "withCredentials": "true", "credentials": 'include'},
                                     }).then(response => {
                                         if(response.status === 200) {
                                             const data = response.json()
@@ -64,6 +63,7 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
                                             store.dispatch(setLoggedInStatus(true))
                                         } else if(response.status === 401){
                                             alert("Invalid credentials")
+                                            //TODO: create beautiful popup window
                                         }
                                     })
                                 }} />
@@ -73,8 +73,7 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
                 </Grid>
                 <Divider horizontal style={{ backgroundColor: "" }}>Or</Divider>
                 <Grid.Column verticalAlign='middle'>
-                    {/* <Button content='Sign up' icon='signup' size='big' /> */}
-                    <ModalExampleDimmer />
+                    <SignupModal />
                 </Grid.Column>
 
             </Segment>
@@ -82,7 +81,7 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
     }
 }
 
-function ModalExampleDimmer() {
+function SignupModal() {
     const [open, setOpen] = React.useState(false)
     const [email, setEmail] = React.useState("")
     const [username, setUsername] = React.useState("")
@@ -136,7 +135,10 @@ function ModalExampleDimmer() {
                         />
                         <Button 
                         color='blue'
-                        onClick={() => registrationSubmit()}
+                        onClick={() => {
+                            registrationSubmit()
+                            setOpen(false)
+                        }}
                         >Submit</Button>
                     </Form>
                     <Message attached='bottom' warning>

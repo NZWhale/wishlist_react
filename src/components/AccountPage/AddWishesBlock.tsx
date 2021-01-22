@@ -27,11 +27,13 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
 
     render() {
         const { users, loggedInUser } = this.props
+        let currentUser: any
+        users.find((user, index) => {if(user.id === loggedInUser.id)currentUser = users[index]})
         return (
             <>
                 <NewWishModal loggedInUser={loggedInUser.username}/>
                 <Segment >
-                    {users[0]?<WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
+                    {currentUser?<WishesBlock wishes={currentUser.wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
                 </Segment>
             </>
         )

@@ -7,14 +7,19 @@ import OneFriendWishes from './OneFriendWishes';
 
 interface FriendsListProps {
     users: Array<User>
+    loggedInUser: {
+        username: string
+        id: string
+    }
 }
 
 class FriendsList extends React.Component<FriendsListProps>{
     render() {
         let usersList
-        const {users} = this.props;
-        if(users){
-        usersList = users.map((user: User) =>
+        const { users, loggedInUser } = this.props;
+        if (users) {
+            const filteredUsers = users.filter((user: User) => user.id !== loggedInUser.id)
+            usersList = filteredUsers.map((user: User) =>
                 <OneFriendWishes user={user} />
             )
         } else {
@@ -22,7 +27,7 @@ class FriendsList extends React.Component<FriendsListProps>{
         }
         return (
             <>
-                <Header activeItem={"Friends"}/>
+                <Header activeItem={"Friends"} />
                 {usersList}
             </>
         )
@@ -30,7 +35,8 @@ class FriendsList extends React.Component<FriendsListProps>{
 }
 
 const mapStateToProps = (state: StateInterface): FriendsListProps => ({
-    users: state.users
+    users: state.users,
+    loggedInUser: state.loggedInUser
 })
 
 export default connect(mapStateToProps)(FriendsList)

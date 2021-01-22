@@ -87,6 +87,7 @@ app.post('/registration', (req, res) => {
     if (fs.existsSync(dataPath)) {
         if (fs.existsSync(usersFilePath)) {
             const users = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"))
+            const publicDatabase = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
             const userFound = users.find(singleUser => singleUser.id === user.id || singleUser.email === user.email)
             if (userFound) {
                 console.log("user already exist")
@@ -95,6 +96,17 @@ app.post('/registration', (req, res) => {
                 user.password = nanoid.nanoid(8)
                 sendAccountDetails(user.email, user.username, user.password)
                 users.push(user)
+                publicDatabase.push({
+                    "id": user.id,
+                    "image": null,
+                    "username": user.username,
+                    "dayOfBirth": "",
+                    "wishes": []
+                })
+                fs.writeFile('data/DB.json', JSON.stringify(publicDatabase), (err) => {
+                    if (err) throw err
+                    console.log("user added to public DB")
+                })
                 fs.writeFile('data/users.json', JSON.stringify(users), (err) => {
                     if (err) throw err
                     console.log("user successfully created")
@@ -126,7 +138,7 @@ let authorisedUsers = {}
 
 const findUserByLogin = (userLogin) => {
     const users = JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
-    return users.find(({email}) => email === userLogin)
+    return users.find(({ email }) => email === userLogin)
 }
 
 app.post('/login', (req, res) => {
@@ -147,7 +159,8 @@ app.post('/login', (req, res) => {
         const cookieAge = 24 * 60 * 60 * 1000
         const authToken = generateAuthToken()
         authorisedUsers[authToken] = userFound.login
-        res.cookie('auth-token', authToken, {maxAge: cookieAge, httpOnly: false})
+        res.cookie('auth-token', authToken, { domain: 'http://localhost:3000', maxAge: cookieAge, httpOnly: false })
+        //TODO: fix cookie setting
         res.status(200).send(userData)
     } else {
         console.log("user not found")
@@ -156,7 +169,7 @@ app.post('/login', (req, res) => {
 })
 
 
-function sendAccountDetails(email, username, pass){
+function sendAccountDetails(email, username, pass) {
     let transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
