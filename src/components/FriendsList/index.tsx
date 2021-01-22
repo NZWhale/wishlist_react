@@ -11,10 +11,15 @@ interface FriendsListProps {
 
 class FriendsList extends React.Component<FriendsListProps>{
     render() {
+        let usersList
         const {users} = this.props;
-        const usersList = users.map((user: User) =>
+        if(users){
+        usersList = users.map((user: User) =>
                 <OneFriendWishes user={user} />
             )
+        } else {
+            usersList = <div></div>
+        }
         return (
             <>
                 <Header activeItem={"Friends"}/>

@@ -9,6 +9,7 @@ import store from '../../store/store';
 import { StateInterface, User } from '../../types';
 import { addWishUrl } from '../../utils';
 import WishesBlock from '../WishesBlock';
+import EmptyWishComponent from '../WishesBlock/EmptyWishComponent';
 
 
 
@@ -27,7 +28,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
             <>
                 <ModalExampleModal loggedInUser={loggedInUser}/>
                 <Segment >
-                    <WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>
+                    {users[0]?<WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
                 </Segment>
             </>
         )
@@ -56,7 +57,7 @@ return (
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
-        trigger={<Button>Add New Wish</Button>}
+        trigger={<Button basic color="teal">Add New Wish</Button>}
     >
         <Modal.Header>Create Wish</Modal.Header>
         <Modal.Content image>
@@ -100,13 +101,17 @@ return (
             </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-            <Button color='black' onClick={() => setOpen(false)}>
+            <Button basic negative onClick={() => {
+                setOpen(false)
+                setImage(null)
+                }}>
                 Cancel
                 </Button>
             <Button
                 content="Add Wish"
                 labelPosition='right'
                 icon='checkmark'
+                basic
                 onClick={() => {
                     fetch(addWishUrl, {
                         method: "POST",
@@ -124,6 +129,7 @@ return (
                     }).then(response => response.json())
                     .then(data => store.dispatch(setUsersAction(data)))
                     setOpen(false)
+                    setImage(null)
                 }}
                 positive
             />

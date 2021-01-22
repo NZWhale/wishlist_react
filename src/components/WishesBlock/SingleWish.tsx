@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { deleteWishUrl } from '../../utils';
 import store from '../../store/store';
 import setUsersAction from '../../store/actionCreators/setUsersAction';
+import { Link } from 'react-router-dom';
 
 
 interface SingleWishProps {
@@ -32,7 +33,7 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
                                 <Item.Description>
                                     {comment ? comment : "null"}
                                 </Item.Description>
-                                <Item.Extra src={url ? url : "null"}>{url ? url : "null"}</Item.Extra>
+                                <Item.Extra><Link to={url ? url : "null"}>{url ? url : "null"}</Link></Item.Extra>
                                 {isLoggedInUser &&
                                     <>
                                         <Button style={{marginTop:"10px"}} 
@@ -51,7 +52,6 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
                                                 }).then(response => response.json())
                                                 .then(data => store.dispatch(setUsersAction(data)))
                                             }}/> 
-                                        {/* <Button style={{marginTop:"10px"}} basic size="mini" color="green" icon="edit outline"/>  */}
                                     </>
                                 }
                             </Item.Content>

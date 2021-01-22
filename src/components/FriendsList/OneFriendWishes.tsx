@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Accordion, Icon } from 'semantic-ui-react';
 import { User } from '../../types';
 import WishesBlock from '../WishesBlock';
+import EmptyWishComponent from '../WishesBlock/EmptyWishComponent';
 
 
 interface OneFriendsWishesProps {
@@ -21,20 +22,21 @@ class OneFriendWishes extends React.Component<OneFriendsWishesProps> {
 
     render() {
         const { activeIndex } = this.state
+        const { wishes, username } = this.props.user
         return (
-            <div style={{marginBottom: '12px'}}>
+            <div style={{ marginBottom: '12px' }}>
                 <Accordion fluid styled>
-                <Accordion.Title
-                    active={activeIndex === 2}
-                    index={2}
-                    onClick={this.handleClick}
-                >
-                    <Icon name='dropdown' />
-                    {this.props.user.username}
-                </Accordion.Title>
-                <Accordion.Content active={activeIndex === 2}>
-                    <WishesBlock wishes={this.props.user.wishes ? this.props.user.wishes : []} isLoggedInUser={false}/>
-                </Accordion.Content>
+                    <Accordion.Title
+                        active={activeIndex === 2}
+                        index={2}
+                        onClick={this.handleClick}
+                    >
+                        <Icon name='dropdown' />
+                        {username}
+                    </Accordion.Title>
+                    <Accordion.Content active={activeIndex === 2}>
+                        {wishes ? <WishesBlock wishes={wishes} isLoggedInUser={false} /> : <EmptyWishComponent />}
+                    </Accordion.Content>
                 </Accordion>
             </div>
         )
