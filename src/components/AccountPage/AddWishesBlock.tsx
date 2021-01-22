@@ -26,7 +26,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
         const { users, loggedInUser } = this.props
         return (
             <>
-                <ModalExampleModal loggedInUser={loggedInUser}/>
+                <NewWishModal loggedInUser={loggedInUser}/>
                 <Segment >
                     {users[0]?<WishesBlock wishes={users[0].wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
                 </Segment>
@@ -35,7 +35,7 @@ class AddWishesBlock extends React.Component<AddWishesBlockProps> {
     }
 }
 
-function ModalExampleModal(loggedInUser: any) {
+function NewWishModal(loggedInUser: any) {
     const [open, setOpen] = React.useState(false)
     const [image, setImage] = React.useState<string|null|ArrayBuffer>(null)
     const [title, setTitle] = React.useState("")
