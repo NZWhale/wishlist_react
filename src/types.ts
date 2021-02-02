@@ -12,7 +12,12 @@ export interface User {
     username: string;
     dayOfBirth?: string;
     wishes: Array<Wish>;
-    friends?: Array<User>
+    friends?: Array<Friend>
+}
+
+export interface Friend {
+    id: string;
+    status: boolean;
 }
 
 export interface StateInterface {

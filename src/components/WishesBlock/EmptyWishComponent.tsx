@@ -6,13 +6,9 @@ class EmptyWishComponent extends React.Component {
         return (
             <>
                 <Segment vertical>
-                    <Item.Group>
-                        <Item >
                             <div>
                             There are no wishes, yet...
                             </div>
-                        </Item>
-                    </Item.Group>
                 </Segment>
             </>
         )

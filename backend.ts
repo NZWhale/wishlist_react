@@ -1,4 +1,6 @@
 const nanoid = require('nanoid')
+const SerpApi = require('google-search-results-nodejs');
+const search = new SerpApi.GoogleSearch("secret_api_key");
 const fs = require('fs')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -13,7 +15,7 @@ const usersFilePath = "./data/users.json"
 const user = "nodemailerwb@gmail.com"
 const password = "RaFV95uk"
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }))
 app.use(cookieParser())
 app.use(express.static(path.resolve() + '/'))
 app.use(bodyParser.json({ limit: '10mb', extended: true }))
@@ -59,7 +61,7 @@ app.post('/deletewish', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
         users.forEach(u => {
-            if (u.username === user) {
+            if (u.id === user.id) {
                 u.wishes.forEach((wish, index) => {
                     if (wish.id === wishId) {
                         u.wishes.splice(index, 1)
@@ -194,6 +196,27 @@ function sendAccountDetails(email, username, pass) {
     })
 }
 
+
+// Handler for image searching
+
+
+app.post('/login', (req, res) => {
+const params = {
+  engine: "google",
+  ijn: "0",
+  q: req.searchParam,
+  google_domain: "google.com",
+  tbm: "isch"
+};
+
+const callback = function(data) {
+  console.log(data);
+};
+
+// Show result as JSON
+search.json(params, callback);
+
+})
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)

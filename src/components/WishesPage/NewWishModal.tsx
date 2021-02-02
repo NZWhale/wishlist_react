@@ -1,44 +1,11 @@
-import { nanoid } from 'nanoid';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { Button, Form, Header, Image, Input, Modal, Segment, TextArea } from 'semantic-ui-react';
-import { InputFile } from 'semantic-ui-react-input-file'
+import { nanoid } from "nanoid"
+import React from "react"
+import { Modal, Form, Input, TextArea, Segment, Image, Button } from "semantic-ui-react"
+import { InputFile } from "semantic-ui-react-input-file"
+import setUsersAction from "../../store/actionCreators/setUsersAction"
+import store from "../../store/store"
+import { addWishUrl } from "../../utils"
 import noImage from '../../images/noImage.jpg';
-import setUsersAction from '../../store/actionCreators/setUsersAction';
-import store from '../../store/store';
-import { StateInterface, User } from '../../types';
-import { addWishUrl } from '../../utils';
-import WishesBlock from '../WishesBlock';
-import EmptyWishComponent from '../WishesBlock/EmptyWishComponent';
-
-
-
-interface AddWishesBlockProps {
-    users: Array<User>
-    loggedInUser: {
-        username: string
-        id: string
-    }
-}
-
-class AddWishesBlock extends React.Component<AddWishesBlockProps> {
-    handleUpload = console.log("1")
-    user = [{ "image": "undefined", "username": "test", "dayOfBirth": "01.01.1970", "wishes": [{ "img":"null", "title": "test", "url": "https://test.com", "comment": "test comment" }, { "img":"null", "title": "test2", "url": "https://test2.com", "comment": "second test comment" }] }]
-
-    render() {
-        const { users, loggedInUser } = this.props
-        let currentUser: any
-        users.find((user, index) => {if(user.id === loggedInUser.id)currentUser = users[index]})
-        return (
-            <>
-                <NewWishModal loggedInUser={loggedInUser.username}/>
-                <Segment >
-                    {currentUser?<WishesBlock wishes={currentUser.wishes} isLoggedInUser={true}/>:<EmptyWishComponent />}
-                </Segment>
-            </>
-        )
-    }
-}
 
 function NewWishModal(loggedInUser: any) {
     const [open, setOpen] = React.useState(false)
@@ -143,9 +110,4 @@ return (
 )
 }
 
-const mapStateToProps = (state: StateInterface): AddWishesBlockProps => ({
-    users: state.users,
-    loggedInUser: state.loggedInUser
-})
-
-export default connect(mapStateToProps)(AddWishesBlock)
+export default NewWishModal

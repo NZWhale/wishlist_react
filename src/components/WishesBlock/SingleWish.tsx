@@ -29,32 +29,56 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
             <>
                 <Segment vertical>
                     <Item.Group>
-                        <Item id={id}>
-                            <Item.Image size='tiny' src={image ? image : noImage} />
+                        <Item id={id}>                            
+                                <Item.Image size='tiny' src={image?image:noImage} />                        
                             <Item.Content>
-                                <Item.Header as=''>{title ? title : "null"}</Item.Header>
-                                <Item.Description>
-                                    {comment ? comment : "null"}
-                                </Item.Description>
-                                <Item.Extra><Link to={url ? url : "null"}>{url ? url : "null"}</Link></Item.Extra>
+                                {title &&
+                                    <Item.Header as=''>{title}</Item.Header>
+                                }
+                                {comment &&
+                                    <Item.Description>
+                                        {comment}
+                                    </Item.Description>
+                                }
+                                {url &&
+                                    <Item.Extra><Link to={url}>{url}</Link></Item.Extra>
+                                }
                                 {isLoggedInUser &&
                                     <>
-                                        <Button style={{marginTop:"10px"}} 
-                                                basic 
-                                                size="mini" 
-                                                color="red" 
-                                                icon="remove"
-                                                onClick={() => {
-                                                    fetch(deleteWishUrl, {
+                                        <br />
+                                        <Button style={{ marginTop: "10px" }}
+                                            basic
+                                            size="mini"
+                                            color="red"
+                                            icon="remove"
+                                            onClick={() => {
+                                                fetch(deleteWishUrl, {
                                                     method: "POST",
                                                     body: JSON.stringify({
                                                         user: loggedInUser,
                                                         id: id,
                                                     }),
-                                                    headers: {"Content-Type": "application/json"},
+                                                    headers: { "Content-Type": "application/json" },
                                                 }).then(response => response.json())
-                                                .then(data => store.dispatch(setUsersAction(data)))
-                                            }}/> 
+                                                    .then(data => store.dispatch(setUsersAction(data)))
+                                            }} />
+
+                                        <Button style={{ marginLeft:"20px", marginTop: "10px" }}
+                                            basic
+                                            size="mini"
+                                            color="green"
+                                            icon="edit"
+                                            onClick={() => {
+                                                fetch(deleteWishUrl, {
+                                                    method: "POST",
+                                                    body: JSON.stringify({
+                                                        user: loggedInUser,
+                                                        id: id,
+                                                    }),
+                                                    headers: { "Content-Type": "application/json" },
+                                                }).then(response => response.json())
+                                                    .then(data => store.dispatch(setUsersAction(data)))
+                                            }} />
                                     </>
                                 }
                             </Item.Content>

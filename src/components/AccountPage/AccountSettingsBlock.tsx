@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Button, Form, Input, Segment } from 'semantic-ui-react';
+import { Button, Form, Input, Menu, Segment } from 'semantic-ui-react';
+import setLoggedInStatus from '../../store/actionCreators/setLoggedStatus';
+import store from '../../store/store';
 
 class AccountSettingsBlock extends React.Component {
     render() {
@@ -30,7 +32,11 @@ class AccountSettingsBlock extends React.Component {
                                 />
                             </Form.Field>
                         </Form.Group>
-                        <Form.Field control={Button}>Submit</Form.Field>
+                        <Form.Field
+                            basic
+                            control={Button}>
+                            Submit
+                            </Form.Field>
                     </Form>
                 </Segment>
             </>

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { BrowserRouter, Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
 import AccountPage from './components/AccountPage';
-import FriendsList from './components/FriendsList';
+import FriendsPage from './components/FriendsPage';
+import WishesPage from './components/WishesPage'
 import 'semantic-ui-css/semantic.min.css'
 import { Segment } from 'semantic-ui-react';
 import LoginPage from './components/LoginPage';
@@ -36,13 +37,16 @@ class App extends React.Component<AppProps & RouteComponentProps> {
                     <Segment>
                         <Switch>
                             <Route history={history} path='/login' render={() =>
-                                loggedInStatus ? <Redirect to="/account" /> : <LoginPage />
+                                loggedInStatus ? <Redirect to="/friends" /> : <LoginPage />
                             } />
-                            <Route history={history} path='/account' render={() =>
+                            <Route history={history} path='/wishes' render={() =>
+                                loggedInStatus ? <WishesPage /> : <Redirect to="/login" />
+                            } />
+                               <Route history={history} path='/account' render={() =>
                                 loggedInStatus ? <AccountPage /> : <Redirect to="/login" />
                             } />
-                            <Route history={history} path='/friendslist' render={() =>
-                                loggedInStatus ? <FriendsList /> : <Redirect to="/login" />
+                            <Route history={history} path='/friends' render={() =>
+                                loggedInStatus ? <FriendsPage /> : <Redirect to="/login" />
                             } />
                             <Redirect from='/' to='/login' />
                         </Switch>
