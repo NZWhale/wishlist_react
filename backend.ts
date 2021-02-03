@@ -81,7 +81,21 @@ app.post('/deletewish', (req, res) => {
     }
 })
 
+
+app.post('/findfriends', (req, res) => {
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        const searchedUsers = users.filter((user) => user.username === req.body.username)
+        res.send(JSON.stringify(searchedUsers))
+    } else {
+        res.status(404)
+    }
+})
+
 //----------------------------------------------------------------
+
+
+
 
 //Private Methods
 app.post('/registration', (req, res) => {
@@ -200,23 +214,23 @@ function sendAccountDetails(email, username, pass) {
 // Handler for image searching
 
 
-app.post('/login', (req, res) => {
-const params = {
-  engine: "google",
-  ijn: "0",
-  q: req.searchParam,
-  google_domain: "google.com",
-  tbm: "isch"
-};
+// app.post('/login', (req, res) => {
+// const params = {
+//   engine: "google",
+//   ijn: "0",
+//   q: req.searchParam,
+//   google_domain: "google.com",
+//   tbm: "isch"
+// };
 
-const callback = function(data) {
-  console.log(data);
-};
+// const callback = function(data) {
+//   console.log(data);
+// };
 
-// Show result as JSON
-search.json(params, callback);
+// // Show result as JSON
+// search.json(params, callback);
 
-})
+// })
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
