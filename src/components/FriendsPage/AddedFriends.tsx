@@ -1,11 +1,15 @@
 import * as React from 'react';
-import { Accordion, Icon } from 'semantic-ui-react';
-import { User } from '../../types';
-import WishesBlock from '../WishesBlock';
-import EmptyWishComponent from '../WishesBlock/EmptyWishComponent';
+import { connect } from 'react-redux';
+import { Accordion, Button, Card, Icon, Image } from 'semantic-ui-react';
+import { Friend, LoggedInUser, StateInterface, User } from '../../types';
+import noImage from '../../images/noImage.jpg';
 
+interface AddedFriendsProps {
+    users: Array<User>
+    loggedInUser: LoggedInUser
+}
 
-class AddedFriends extends React.Component {
+class AddedFriends extends React.Component<AddedFriendsProps> {
     state = { activeIndex: 0 }
 
     handleClick = (e: any, titleProps: any) => {
@@ -17,7 +21,28 @@ class AddedFriends extends React.Component {
     }
 
     render() {
+        const { loggedInUser, users } = this.props
         const { activeIndex } = this.state
+        const myFriends = users.filter((user: User) => user.id === loggedInUser.id)[0].friends
+        const myFriendsComponent = myFriends.map((friend: Friend) => (
+            <Card>
+                <Card.Content>
+                    <Image
+                        floated='right'
+                        size='tiny'
+                        circular
+                        src={friend.image?friend.image:noImage}
+                    />
+                    <Card.Header>{friend.username}</Card.Header>
+                    <Card.Meta>{friend.dayOfBirth ? friend.dayOfBirth : ""}</Card.Meta>
+                </Card.Content>
+                <Card.Content extra>
+                        <Button basic color='red'>
+                            Delete
+                        </Button>
+                </Card.Content>
+            </Card>
+        ))
 
         return (
             <div style={{ marginBottom: '12px' }}>
@@ -31,7 +56,9 @@ class AddedFriends extends React.Component {
                         Added friends
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 2}>
-                        user
+                        <Card.Group>
+                        {myFriendsComponent}
+                        </Card.Group>
                     </Accordion.Content>
                 </Accordion>
             </div>
@@ -39,4 +66,9 @@ class AddedFriends extends React.Component {
     }
 }
 
-export default AddedFriends
+const mapStateToProps = (state: StateInterface): AddedFriendsProps => ({
+    users: state.users,
+    loggedInUser: state.loggedInUser
+})
+
+export default connect(mapStateToProps)(AddedFriends)

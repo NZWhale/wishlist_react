@@ -5,16 +5,13 @@ import { Button, Divider, Form, Grid, Segment } from 'semantic-ui-react';
 import setLoggedInUser from '../../store/actionCreators/setLoggedInUser';
 import setLoggedInStatus from '../../store/actionCreators/setLoggedStatus';
 import store from '../../store/store';
-import { StateInterface } from '../../types';
+import { LoggedInUser, StateInterface } from '../../types';
 import { loginUrl} from '../../utils';
 import SignUpModal from './SignUpModal';
 
 
 interface LoginPageProps {
-    loggedInUser: {
-        username: string;
-        id: string;
-    }
+    loggedInUser: LoggedInUser
     loggedInStatus: boolean
 }
 

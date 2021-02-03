@@ -12,20 +12,25 @@ export interface User {
     username: string;
     dayOfBirth?: string;
     wishes: Array<Wish>;
-    friends?: Array<Friend>
+    friends: Array<Friend>
 }
 
 export interface Friend {
+    username: string;
+    dayOfBirth?: string;
+    image?: string|null;
     id: string;
     status: boolean;
 }
 
-export interface StateInterface {
-    users: Array<User>;
-    loggedInUser: {
+export interface LoggedInUser {
         username: string,
         id: string
-    };
+}
+
+export interface StateInterface {
+    users: Array<User>;
+    loggedInUser: LoggedInUser;
     loggedInStatus: boolean;
 }
 
