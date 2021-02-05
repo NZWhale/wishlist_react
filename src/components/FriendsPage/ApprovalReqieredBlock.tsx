@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Checkbox, Table } from "semantic-ui-react";
 import { User, Friend, StateInterface, LoggedInUser } from "../../types";
 import AddFriendModal from "./AddFriendModal";
-import { approveUrl } from "../../utils";
+import { approveUrl, declineUrl } from "../../utils";
 import store from "../../store/store";
 import setUsers from "../../store/actionCreators/setUsersAction";
 
@@ -38,6 +38,22 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
                 console.log(store.getState())
             })
     }
+    sendDeclineRequest() {
+        fetch(declineUrl, {
+            method: "POST",
+            body: JSON.stringify({
+                selected: this.state.selected,
+                loggedInUser: this.props.loggedInUser
+            }),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => response.json())
+            .then(data => {
+                store.dispatch(setUsers(data))
+                console.log(store.getState())
+            })
+    }
+
     render() {
         const { users, loggedInUser } = this.props
         const { selected } = this.state
@@ -86,7 +102,12 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
                             color="green" 
                             onClick={() => this.sendApproveRequest()}
                             />
-                            <Button basic icon="times" color="red" />
+                            <Button 
+                            basic 
+                            icon="times" 
+                            color="red" 
+                            onClick={() => this.sendDeclineRequest()}
+                            />
                             <AddFriendModal />
                         </Table.HeaderCell>
                     </Table.Row>

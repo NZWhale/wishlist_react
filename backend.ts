@@ -117,6 +117,31 @@ app.post('/approve', (req, res) => {
     }
 })
 
+app.post('/decline', (req, res) => {
+    const {selected, loggedInUser} = req.body
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        users.forEach(user => {
+            if(user.id === loggedInUser.id){
+                selected.forEach(e => {
+                    user.friends.forEach((friend, index) => {
+                        if(friend.id === e) {
+                            user.friends.splice(index, 1)
+                        }
+                    })
+                })
+            }
+        })
+        fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
+            if (err) throw err
+            console.log("approved")
+        })
+        res.send(JSON.stringify(users))
+    } else {
+        res.status(404)
+    }
+})
+
 app.post('/sendrequest', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
