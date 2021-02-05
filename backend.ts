@@ -93,15 +93,50 @@ app.post('/findfriends', (req, res) => {
 })
 
 app.post('/approve', (req, res) => {
-    const {selected, loggedInUser} = req.body
+    const { selected, loggedInUser } = req.body
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
         users.forEach(user => {
-            if(user.id === loggedInUser.id){
+            if (user.id === loggedInUser.id) {
                 selected.forEach(e => {
                     user.friends.forEach(friend => {
-                        if(friend.id === e) {
+                        if (friend.id === e) {
                             friend.status = "true"
+                            // user.friends.push(friend)
+                        }
+                    })
+                })
+            }
+            selected.forEach(e => {
+                if(user.id === e){
+                    user.friends.forEach(friend => {
+                        if (friend.id === loggedInUser.id) {
+                            friend.status = "true"
+                        }
+                    })
+                }
+            });
+        })
+        fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
+            if (err) throw err
+            console.log("approved")
+        })
+        res.send(JSON.stringify(users))
+    } else {
+        res.status(404)
+    }
+})
+
+app.post('/decline', (req, res) => {
+    const { selected, loggedInUser } = req.body
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        users.forEach(user => {
+            if (user.id === loggedInUser.id) {
+                selected.forEach(e => {
+                    user.friends.forEach((friend, index) => {
+                        if (friend.id === e) {
+                            user.friends.splice(index, 1)
                         }
                     })
                 })
@@ -117,18 +152,23 @@ app.post('/approve', (req, res) => {
     }
 })
 
-app.post('/decline', (req, res) => {
-    const {selected, loggedInUser} = req.body
+app.post('/deletefriend', (req, res) => {
+    const { id, loggedInUser } = req.body
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
         users.forEach(user => {
-            if(user.id === loggedInUser.id){
-                selected.forEach(e => {
-                    user.friends.forEach((friend, index) => {
-                        if(friend.id === e) {
-                            user.friends.splice(index, 1)
-                        }
-                    })
+            if (user.id === loggedInUser.id) {
+                user.friends.forEach((friend, index) => {
+                    if (friend.id === id) {
+                        user.friends.splice(index, 1)
+                    }
+                })
+            }
+            if (user.id === id) {
+                user.friends.forEach((friend, index) => {
+                    if (friend.id === loggedInUser.id) {
+                        user.friends.splice(index, 1)
+                    }
                 })
             }
         })
@@ -146,12 +186,21 @@ app.post('/sendrequest', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
         users.forEach(user => {
-            if(user.id === req.body.id){
+            if (user.id === req.body.id) {
                 user.friends.push({
-                "username": req.body.loggedInUser.username, 
-                "id": req.body.loggedInUser.id, 
-                "status": "required"
+                    "username": req.body.loggedInUser.username,
+                    "id": req.body.loggedInUser.id,
+                    "status": "required"
                 })
+                users.forEach(e => {
+                    if(e.id === req.body.loggedInUser.id){
+                        e.friends.push({
+                            username: user.username,
+                            id: user.id,
+                            status: "pending"
+                        })
+                    }
+                });
             }
         });
         fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {

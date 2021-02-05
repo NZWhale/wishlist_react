@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { Accordion, Button, Card, Icon, Image } from 'semantic-ui-react';
 import { Friend, LoggedInUser, StateInterface, User } from '../../types';
 import noImage from '../../images/noImage.jpg';
+import store from '../../store/store';
+import setUsers from '../../store/actionCreators/setUsersAction';
+import { deleteFriendUrl } from '../../utils';
 
 interface AddedFriendsProps {
     users: Array<User>
@@ -20,6 +23,22 @@ class AddedFriends extends React.Component<AddedFriendsProps> {
         this.setState({ activeIndex: newIndex })
     }
 
+    deleteFriendRequest(id: string) {
+        fetch(deleteFriendUrl, {
+            method: "POST",
+            body: JSON.stringify({
+                id: id,
+                loggedInUser: this.props.loggedInUser
+            }),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => response.json())
+            .then(data => {
+                store.dispatch(setUsers(data))
+                console.log(store.getState())
+            })
+    }
+
     render() {
         const { loggedInUser, users } = this.props
         const { activeIndex } = this.state
@@ -34,10 +53,18 @@ class AddedFriends extends React.Component<AddedFriendsProps> {
                         src={friend.image?friend.image:noImage}
                     />
                     <Card.Header>{friend.username}</Card.Header>
-                    <Card.Meta>{friend.dayOfBirth ? friend.dayOfBirth : ""}</Card.Meta>
+                    <Card.Meta>
+                        {friend.dayOfBirth ? friend.dayOfBirth : ""}
+                        <br />
+                        {friend.status === "pending"?"Waiting for approval":""}
+                        </Card.Meta>
                 </Card.Content>
                 <Card.Content extra>
-                        <Button basic color='red'>
+                        <Button 
+                        basic 
+                        color='red'
+                        onClick={() => this.deleteFriendRequest(friend.id)}
+                        >
                             Delete
                         </Button>
                 </Card.Content>

@@ -58,27 +58,37 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
         const { users, loggedInUser } = this.props
         const { selected } = this.state
         const requiredFriends = this.getRequiredFriends(users, loggedInUser)
-        const reqiredFriendsComponent = requiredFriends.map((friend: Friend) => (
-            <Table.Row>
-                <Table.Cell collapsing>
-                    <Checkbox
-                        slider
-                        onChange={() => {
-                            const res = selected.find((e) => e === friend.id)
-                            if (res) {
-                                const index = selected.indexOf(res)
-                                selected.splice(index, 1)
-                            } else {
-                                selected.push(friend.id)
-                            }
-                            console.log(this.state.selected)
-                        }}
-                    />
-                </Table.Cell>
-                <Table.Cell>{friend.username}</Table.Cell>
-                <Table.Cell>{friend.dayOfBirth ? friend.dayOfBirth : ""}</Table.Cell>
-            </Table.Row>
-        ))
+        let requiredFriendsComponent
+        if (requiredFriends.length === 0) {
+            requiredFriendsComponent =
+                <Table.Row>
+                    <Table.Cell collapsing>
+                    </Table.Cell>
+                    <Table.Cell>No applications for approval</Table.Cell>
+                </Table.Row>
+        } else {
+            requiredFriendsComponent = requiredFriends.map((friend: Friend) => (
+                <Table.Row>
+                    <Table.Cell collapsing>
+                        <Checkbox
+                            slider
+                            onChange={() => {
+                                const res = selected.find((e) => e === friend.id)
+                                if (res) {
+                                    const index = selected.indexOf(res)
+                                    selected.splice(index, 1)
+                                } else {
+                                    selected.push(friend.id)
+                                }
+                                console.log(this.state.selected)
+                            }}
+                        />
+                    </Table.Cell>
+                    <Table.Cell>{friend.username}</Table.Cell>
+                    <Table.Cell>{friend.dayOfBirth ? friend.dayOfBirth : ""}</Table.Cell>
+                </Table.Row>
+            ))
+        }
         return (
             <Table celled compact definition>
                 <Table.Header fullWidth>
@@ -89,24 +99,24 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
                 </Table.Header>
 
                 <Table.Body>
-                    {reqiredFriendsComponent}
+                    {requiredFriendsComponent}
                 </Table.Body>
 
                 <Table.Footer fullWidth>
                     <Table.Row>
                         <Table.HeaderCell />
                         <Table.HeaderCell colSpan='4'>
-                            <Button 
-                            basic 
-                            icon="check" 
-                            color="green" 
-                            onClick={() => this.sendApproveRequest()}
+                            <Button
+                                basic
+                                icon="check"
+                                color="green"
+                                onClick={() => this.sendApproveRequest()}
                             />
-                            <Button 
-                            basic 
-                            icon="times" 
-                            color="red" 
-                            onClick={() => this.sendDeclineRequest()}
+                            <Button
+                                basic
+                                icon="times"
+                                color="red"
+                                onClick={() => this.sendDeclineRequest()}
                             />
                             <AddFriendModal />
                         </Table.HeaderCell>
