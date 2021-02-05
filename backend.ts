@@ -91,6 +91,32 @@ app.post('/findfriends', (req, res) => {
         res.status(404)
     }
 })
+
+app.post('/approve', (req, res) => {
+    const {selected, loggedInUser} = req.body
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        users.forEach(user => {
+            if(user.id === loggedInUser.id){
+                selected.forEach(e => {
+                    user.friends.forEach(friend => {
+                        if(friend.id === e) {
+                            friend.status = "true"
+                        }
+                    })
+                })
+            }
+        })
+        fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
+            if (err) throw err
+            console.log("approved")
+        })
+        res.send(JSON.stringify(users))
+    } else {
+        res.status(404)
+    }
+})
+
 app.post('/sendrequest', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
@@ -105,7 +131,7 @@ app.post('/sendrequest', (req, res) => {
         });
         fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
             if (err) throw err
-            console.log("user added to public DB")
+            console.log("request sended")
         })
         res.send(JSON.stringify(users))
     } else {

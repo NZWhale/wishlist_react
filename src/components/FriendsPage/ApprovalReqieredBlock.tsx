@@ -3,6 +3,9 @@ import React from "react";
 import { Button, Checkbox, Table } from "semantic-ui-react";
 import { User, Friend, StateInterface, LoggedInUser } from "../../types";
 import AddFriendModal from "./AddFriendModal";
+import { approveUrl } from "../../utils";
+import store from "../../store/store";
+import setUsers from "../../store/actionCreators/setUsersAction";
 
 
 interface ApprovalReqiredBlockProps {
@@ -13,22 +16,51 @@ interface ApprovalReqiredBlockProps {
 class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
     state = {
         isOpen: false,
+        selected: [] as Array<string>
     }
-    getRequiredFriends(users: Array<User>, loggedInUser: LoggedInUser){
+    getRequiredFriends(users: Array<User>, loggedInUser: LoggedInUser) {
         const myFriends = users.filter((user: User) => user.id === loggedInUser.id)[0].friends
         const reqiredFriends = myFriends.filter(friend => friend.status === "required")
         return reqiredFriends
     }
+    sendApproveRequest() {
+        fetch(approveUrl, {
+            method: "POST",
+            body: JSON.stringify({
+                selected: this.state.selected,
+                loggedInUser: this.props.loggedInUser
+            }),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => response.json())
+            .then(data => {
+                store.dispatch(setUsers(data))
+                console.log(store.getState())
+            })
+    }
     render() {
         const { users, loggedInUser } = this.props
+        const { selected } = this.state
         const requiredFriends = this.getRequiredFriends(users, loggedInUser)
         const reqiredFriendsComponent = requiredFriends.map((friend: Friend) => (
             <Table.Row>
                 <Table.Cell collapsing>
-                    <Checkbox slider />
+                    <Checkbox
+                        slider
+                        onChange={() => {
+                            const res = selected.find((e) => e === friend.id)
+                            if (res) {
+                                const index = selected.indexOf(res)
+                                selected.splice(index, 1)
+                            } else {
+                                selected.push(friend.id)
+                            }
+                            console.log(this.state.selected)
+                        }}
+                    />
                 </Table.Cell>
                 <Table.Cell>{friend.username}</Table.Cell>
-                <Table.Cell>{friend.dayOfBirth?friend.dayOfBirth:""}</Table.Cell>
+                <Table.Cell>{friend.dayOfBirth ? friend.dayOfBirth : ""}</Table.Cell>
             </Table.Row>
         ))
         return (
@@ -48,7 +80,12 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
                     <Table.Row>
                         <Table.HeaderCell />
                         <Table.HeaderCell colSpan='4'>
-                            <Button basic icon="check" color="green" />
+                            <Button 
+                            basic 
+                            icon="check" 
+                            color="green" 
+                            onClick={() => this.sendApproveRequest()}
+                            />
                             <Button basic icon="times" color="red" />
                             <AddFriendModal />
                         </Table.HeaderCell>
