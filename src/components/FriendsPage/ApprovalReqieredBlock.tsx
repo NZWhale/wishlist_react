@@ -14,11 +14,15 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
     state = {
         isOpen: false,
     }
+    getRequiredFriends(users: Array<User>, loggedInUser: LoggedInUser){
+        const myFriends = users.filter((user: User) => user.id === loggedInUser.id)[0].friends
+        const reqiredFriends = myFriends.filter(friend => friend.status === "required")
+        return reqiredFriends
+    }
     render() {
         const { users, loggedInUser } = this.props
-        const myFriends = users.filter((user: User) => user.id === loggedInUser.id)[0].friends
-        const reqiredFriends = myFriends.filter((friend: Friend) => friend.status !== true)
-        const reqiredFriendsComponent = reqiredFriends.map((friend: Friend) => (
+        const requiredFriends = this.getRequiredFriends(users, loggedInUser)
+        const reqiredFriendsComponent = requiredFriends.map((friend: Friend) => (
             <Table.Row>
                 <Table.Cell collapsing>
                     <Checkbox slider />

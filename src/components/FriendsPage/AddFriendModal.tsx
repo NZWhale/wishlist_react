@@ -1,15 +1,18 @@
 import React from "react"
 import { Modal, Input, Button, Card, Image, Form } from "semantic-ui-react"
 import { connect } from "react-redux"
-import { StateInterface, User } from "../../types"
-import { findFriendsUrl } from "../../utils"
+import { LoggedInUser, StateInterface, User } from "../../types"
+import { findFriendsUrl, sendRequestUrl } from "../../utils"
 import noImage from '../../images/noImage.jpg';
+import store from "../../store/store"
+import setUsers from "../../store/actionCreators/setUsersAction"
 
 interface AddFriendsProps {
-
+    users: Array<User>,
+    loggedInUser: LoggedInUser
 }
 
-class AddFriendsModal extends React.Component {
+class AddFriendsModal extends React.Component<AddFriendsProps> {
     state = {
         isOpen: false,
         username: "",
@@ -30,6 +33,21 @@ class AddFriendsModal extends React.Component {
                 console.log(this.state)
             })
     }
+    sendFriendRequest(id: string) {
+        fetch(sendRequestUrl, {
+            method: "POST",
+            body: JSON.stringify({
+                id: id,
+                loggedInUser: this.props.loggedInUser
+            }),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => response.json())
+            .then(data => {
+                store.dispatch(setUsers(data))
+                console.log(store.getState())
+            })
+    }
 
     render() {
         const { searchedUser } = this.state
@@ -48,7 +66,10 @@ class AddFriendsModal extends React.Component {
                 </Card.Content>
                 <Card.Content extra>
                     <div className='ui two buttons'>
-                        <Button basic color='green'>
+                        <Button basic 
+                                color='green'
+                                onClick={() => this.sendFriendRequest(user.id)}
+                                >
                             Send request
                     </Button>
                     </div>
@@ -65,17 +86,17 @@ class AddFriendsModal extends React.Component {
                 trigger={<Button basic color="teal" style={{ marginBottom: "12px" }}>Find new friends</Button>}
             >
                 <Modal.Header>Find friends</Modal.Header>
-                        <Input
-                            action={<Button color='blue' basic content='Search' onClick={() => this.getSearchedUsers()} />}
-                            icon='users'
-                            style={{ marginLeft: "17px", marginTop: "12px" }}
-                            iconPosition='left'
-                            placeholder='Username'
-                            onChange={(e) => {
-                                this.setState({ username: e.target.value })
-                                console.log(this.state)
-                            }}
-                        />
+                <Input
+                    action={<Button color='blue' basic content='Search' onClick={() => this.getSearchedUsers()} />}
+                    icon='users'
+                    style={{ marginLeft: "17px", marginTop: "12px" }}
+                    iconPosition='left'
+                    placeholder='Username'
+                    onChange={(e) => {
+                        this.setState({ username: e.target.value })
+                        console.log(this.state)
+                    }}
+                />
                 <Modal.Content image>
                     <Card.Group>
                         {searchedUser ? searchedUsersComponent : ""}

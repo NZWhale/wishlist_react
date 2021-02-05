@@ -91,6 +91,27 @@ app.post('/findfriends', (req, res) => {
         res.status(404)
     }
 })
+app.post('/sendrequest', (req, res) => {
+    if (fs.existsSync(dataPath)) {
+        const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
+        users.forEach(user => {
+            if(user.id === req.body.id){
+                user.friends.push({
+                "username": req.body.loggedInUser.username, 
+                "id": req.body.loggedInUser.id, 
+                "status": "required"
+                })
+            }
+        });
+        fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
+            if (err) throw err
+            console.log("user added to public DB")
+        })
+        res.send(JSON.stringify(users))
+    } else {
+        res.status(404)
+    }
+})
 
 //----------------------------------------------------------------
 

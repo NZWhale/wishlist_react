@@ -20,7 +20,7 @@ export interface Friend {
     dayOfBirth?: string;
     image?: string|null;
     id: string;
-    status: boolean;
+    status: string;
 }
 
 export interface LoggedInUser {
