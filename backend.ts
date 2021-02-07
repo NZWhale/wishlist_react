@@ -296,7 +296,8 @@ app.post('/login', (req, res) => {
         const cookieAge = 24 * 60 * 60 * 1000
         const authToken = generateAuthToken()
         authorisedUsers[authToken] = userFound.login
-        res.cookie('auth-token', authToken, { domain: 'http://localhost:3000', maxAge: cookieAge, httpOnly: false })
+        res.cookie('auth-token', authToken, { domain: 'localhost', maxAge: cookieAge, httpOnly: false })
+        
         //TODO: fix cookie setting
         res.status(200).send(userData)
     } else {

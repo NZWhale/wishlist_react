@@ -48,8 +48,6 @@ class FriendsPage extends React.Component<FriendsPageProps>{
                         </div>
                     </Segment >
             }
-            const filteredUsers = users.filter((user: User) => user.id !== loggedInUser.id)
-
         }
         return (
             <>

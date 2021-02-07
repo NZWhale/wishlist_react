@@ -41,7 +41,7 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
                                     </Item.Description>
                                 }
                                 {url &&
-                                    <Item.Extra><Link to={url}>{url}</Link></Item.Extra>
+                                    <Item.Extra><a href={`https://${url}`}>{url}</a></Item.Extra>
                                 }
                                 {isLoggedInUser &&
                                     <>

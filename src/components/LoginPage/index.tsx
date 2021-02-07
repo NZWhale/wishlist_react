@@ -51,7 +51,8 @@ class LoginPage extends React.Component<LoginPageProps & RouteComponentProps> {
                                             email: this.state.login,
                                             password: this.state.password
                                         }),
-                                        headers: {"Content-Type": "application/json", "withCredentials": "true", "credentials": 'include'},
+                                        credentials: 'include',
+                                        headers: {"Content-Type": "application/json" },
                                     }).then(response => {
                                         if(response.status === 200) {
                                             const data = response.json()
