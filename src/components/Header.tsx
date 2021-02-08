@@ -2,10 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Input, Menu } from 'semantic-ui-react';
-import { BrowserView, isMobile } from 'react-device-detect';
 import setLoggedInStatus from '../store/actionCreators/setLoggedStatus';
 import store from '../store/store';
 import { StateInterface } from '../types';
+import cookie from 'js-cookie';
 
 interface HeaderProps extends HeaderPropsFromState {
     activeItem: string;
@@ -60,6 +60,7 @@ class Header extends React.Component<HeaderProps & RouteComponentProps> {
                                 onClick={() => {
                                     console.log(this.props.loggedInUser)
                                     store.dispatch(setLoggedInStatus(false))
+                                    cookie.remove("auth-token")
                                     history.push('/login')
                                 }}
                             >Exit</Button>

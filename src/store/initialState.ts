@@ -4,7 +4,8 @@ const initialState: StateInterface = {
     users: [],
     loggedInUser: {
         username: "",
-        id: ""
+        id: "",
+        cookie: ""
     },
     loggedInStatus: false
 }

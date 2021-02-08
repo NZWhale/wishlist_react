@@ -35,7 +35,7 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
             .then(response => response.json())
             .then(data => {
                 store.dispatch(setUsers(data))
-                console.log(store.getState())
+                alert("Users approved")
             })
     }
     sendDeclineRequest() {
@@ -50,7 +50,7 @@ class ApprovalReqiredBlock extends React.Component<ApprovalReqiredBlockProps> {
             .then(response => response.json())
             .then(data => {
                 store.dispatch(setUsers(data))
-                console.log(store.getState())
+                alert("Users declined")
             })
     }
 

@@ -25,7 +25,8 @@ export interface Friend {
 
 export interface LoggedInUser {
         username: string,
-        id: string
+        id: string,
+        cookie: string
 }
 
 export interface StateInterface {

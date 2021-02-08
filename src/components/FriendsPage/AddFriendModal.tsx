@@ -45,7 +45,10 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
             .then(response => response.json())
             .then(data => {
                 store.dispatch(setUsers(data))
-                console.log(store.getState())
+                alert("Request sended successfull")
+            })
+            .catch(err => {
+                alert(err)
             })
     }
 

@@ -7,17 +7,18 @@ import 'semantic-ui-css/semantic.min.css'
 import { Segment } from 'semantic-ui-react';
 import LoginPage from './components/LoginPage';
 import { connect } from 'react-redux';
-import { StateInterface } from './types';
+import { LoggedInUser, StateInterface } from './types';
 import setUsersAction from './store/actionCreators/setUsersAction';
 import store from './store/store';
-import { getFriendsListUtl } from './utils';
+import { checkLoginUrl, getFriendsListUtl } from './utils';
+import setLoggedInStatus from './store/actionCreators/setLoggedStatus';
+import setLoggedInUser from './store/actionCreators/setLoggedInUser';
+import { response } from 'express';
+
 
 
 interface AppProps {
-    loggedInUser: {
-        username: string;
-        id: string;
-    }
+    loggedInUser: LoggedInUser
     loggedInStatus: boolean
 }
 
@@ -26,7 +27,28 @@ class App extends React.Component<AppProps & RouteComponentProps> {
     componentDidMount() {
         fetch(getFriendsListUtl)
             .then(response => response.json())
-            .then(data => store.dispatch(setUsersAction(data)))
+            .then(data => {
+                store.dispatch(setUsersAction(data))
+                console.log(store.getState())
+            })
+            
+        fetch(checkLoginUrl, {
+            method: "POST",
+            credentials: 'include',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({})
+        })
+            .then(response => {
+                if(response.status >= 400){
+                    store.dispatch(setLoggedInStatus(false))
+                } else {
+                    const data = response.json()
+                    data.then(data => {
+                            store.dispatch(setLoggedInUser(data))
+                            store.dispatch(setLoggedInStatus(true))
+                        })
+                    }
+                })
     }
 
     render() {

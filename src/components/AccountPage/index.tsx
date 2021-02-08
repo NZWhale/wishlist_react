@@ -7,7 +7,7 @@ class AccountPage extends React.Component {
         return (
             <>
                 <Header activeItem={"Account"}/>
-                <AccountSettingsBlock />
+                {/* <AccountSettingsBlock /> */}
             </>
         )
     }

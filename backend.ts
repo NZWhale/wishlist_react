@@ -144,7 +144,7 @@ app.post('/decline', (req, res) => {
         })
         fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
             if (err) throw err
-            console.log("approved")
+            console.log("declined")
         })
         res.send(JSON.stringify(users))
     } else {
@@ -174,7 +174,7 @@ app.post('/deletefriend', (req, res) => {
         })
         fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
             if (err) throw err
-            console.log("approved")
+            console.log("friend deleted")
         })
         res.send(JSON.stringify(users))
     } else {
@@ -186,6 +186,11 @@ app.post('/sendrequest', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
         users.forEach(user => {
+            const isRequested = user.friends.filter(friend => friend.id === req.body.id)
+            if(isRequested.length > 0){
+                console.log("Already requested")
+                res.status(404)
+            }else{
             if (user.id === req.body.id) {
                 user.friends.push({
                     "username": req.body.loggedInUser.username,
@@ -202,6 +207,7 @@ app.post('/sendrequest', (req, res) => {
                     }
                 });
             }
+        }
         });
         fs.writeFile('data/DB.json', JSON.stringify(users), (err) => {
             if (err) throw err
@@ -278,6 +284,23 @@ const findUserByLogin = (userLogin) => {
     return users.find(({ email }) => email === userLogin)
 }
 
+app.post('/checklogin', (req, res) => {
+    if (req.cookies) {
+        const authToken = req.cookies["auth-token"]
+        const userLogin = authorisedUsers[authToken]
+        if (userLogin) {
+            const user = findUserByLogin(userLogin)
+            res.status(200).send({
+                "username": user.username,
+                "id": user.id,
+                "cookie": authToken
+            })
+            return
+        }
+    }
+    res.status(401).send({})
+})
+
 app.post('/login', (req, res) => {
     const user = req.body;
     if (!fs.existsSync(dataPath)) {
@@ -288,14 +311,16 @@ app.post('/login', (req, res) => {
     }
     const userFound = findUserByLogin(user.email)
     if (userFound && userFound.password === user.password) {
-        const userData = {
-            "username": userFound.username,
-            "id": userFound.id
-        }
-        console.log("login successful")
         const cookieAge = 24 * 60 * 60 * 1000
         const authToken = generateAuthToken()
-        authorisedUsers[authToken] = userFound.login
+        authorisedUsers[authToken] = userFound.email
+        console.log(authorisedUsers)
+        const userData = {
+            "username": userFound.username,
+            "id": userFound.id,
+            "cookie": authToken
+        }
+        console.log("login successful")
         res.cookie('auth-token', authToken, { domain: 'localhost', maxAge: cookieAge, httpOnly: false })
         
         //TODO: fix cookie setting
