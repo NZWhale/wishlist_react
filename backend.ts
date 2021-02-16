@@ -311,7 +311,7 @@ app.post('/login', (req, res) => {
     }
     const userFound = findUserByLogin(user.email)
     if (userFound && userFound.password === user.password) {
-        const cookieAge = 24 * 60 * 60 * 1000
+        const cookieAge = 24 * 60 * 60 * 1000 * 10
         const authToken = generateAuthToken()
         authorisedUsers[authToken] = userFound.email
         console.log(authorisedUsers)

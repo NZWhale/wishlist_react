@@ -85,6 +85,7 @@ return (
                 icon='checkmark'
                 basic
                 onClick={() => {
+                    if(title){
                     fetch(addWishUrl, {
                         method: "POST",
                         body: JSON.stringify({
@@ -101,7 +102,13 @@ return (
                     }).then(response => response.json())
                     .then(data => store.dispatch(setUsersAction(data)))
                     setOpen(false)
+                } else {
+                    alert('Enter title')
+                }
                     setImage(null)
+                    setComment("")
+                    setTitle("")
+                    setUrl("")
                 }}
                 positive
             />
