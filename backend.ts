@@ -12,6 +12,7 @@ const app = express()
 const port = 3001
 const dataPath = "./data"
 const usersFilePath = "./data/users.json"
+const publicDbPath = "./data/DB.json"
 const user = "nodemailerwb@gmail.com"
 const password = "RaFV95uk"
 
@@ -85,7 +86,7 @@ app.post('/deletewish', (req, res) => {
 app.post('/findfriends', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
-        const searchedUsers = users.filter((user) => user.username === req.body.username)
+        const searchedUsers = users.filter((user) => user.username.toLowerCase() === req.body.username.toLowerCase())
         res.send(JSON.stringify(searchedUsers))
     } else {
         res.status(404)
@@ -185,14 +186,14 @@ app.post('/deletefriend', (req, res) => {
 app.post('/sendrequest', (req, res) => {
     if (fs.existsSync(dataPath)) {
         const users = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
-        users.forEach(user => {
-            const isRequested = user.friends.filter(friend => friend.id === req.body.id)
+        users.forEach(u => {
+            const isRequested = u.friends.filter(friend => friend.id === req.body.id)
             if(isRequested.length > 0){
                 console.log("Already requested")
                 res.status(404)
             }else{
-            if (user.id === req.body.id) {
-                user.friends.push({
+            if (u.id === req.body.id) {
+                u.friends.push({
                     "username": req.body.loggedInUser.username,
                     "id": req.body.loggedInUser.id,
                     "status": "required"
@@ -200,8 +201,8 @@ app.post('/sendrequest', (req, res) => {
                 users.forEach(e => {
                     if(e.id === req.body.loggedInUser.id){
                         e.friends.push({
-                            username: user.username,
-                            id: user.id,
+                            username: u.username,
+                            id: u.id,
                             status: "pending"
                         })
                     }
@@ -227,11 +228,13 @@ app.post('/sendrequest', (req, res) => {
 //Private Methods
 app.post('/registration', (req, res) => {
     const user = req.body
+    let users
+    let publicDatabase
     if (fs.existsSync(dataPath)) {
         if (fs.existsSync(usersFilePath)) {
-            const users = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"))
-            const publicDatabase = JSON.parse(fs.readFileSync("data/DB.json", "utf-8"))
-            const userFound = users.find(singleUser => singleUser.id === user.id || singleUser.email === user.email)
+            users = JSON.parse(fs.readFileSync(usersFilePath, "utf-8"))
+            publicDatabase = JSON.parse(fs.readFileSync(publicDbPath, "utf-8"))
+            const userFound = users.find(singleUser => singleUser.id === user.id || singleUser.email.toLowerCase() === user.email.toLowerCase())
             if (userFound) {
                 console.log("user already exist")
                 res.status(404).send("user already exist")
@@ -239,20 +242,21 @@ app.post('/registration', (req, res) => {
                 user.password = nanoid.nanoid(8)
                 sendAccountDetails(user.email, user.username, user.password)
                 users.push(user)
+                fs.writeFile('data/users.json', JSON.stringify(users), (err) => {
+                    if (err) throw err
+                    console.log("user successfully created")
+                })
                 publicDatabase.push({
                     "id": user.id,
                     "image": null,
                     "username": user.username,
                     "dayOfBirth": "",
-                    "wishes": []
+                    "wishes": [],
+                    "friends": []
                 })
                 fs.writeFile('data/DB.json', JSON.stringify(publicDatabase), (err) => {
                     if (err) throw err
                     console.log("user added to public DB")
-                })
-                fs.writeFile('data/users.json', JSON.stringify(users), (err) => {
-                    if (err) throw err
-                    console.log("user successfully created")
                     res.status(200)
                 })
             }
@@ -281,7 +285,7 @@ let authorisedUsers = {}
 
 const findUserByLogin = (userLogin) => {
     const users = JSON.parse(fs.readFileSync("data/users.json", "utf-8"))
-    return users.find(({ email }) => email === userLogin)
+    return users.find(({ email }) => email.toLowerCase() === userLogin.toLowerCase())
 }
 
 app.post('/checklogin', (req, res) => {
@@ -334,10 +338,11 @@ app.post('/login', (req, res) => {
 
 function sendAccountDetails(email, username, pass) {
     let transporter = nodemailer.createTransport({
-        service: 'Gmail',
+        service: 'smtp-relay.sendinblue.com',
+        port: 587,
         auth: {
-            user: user,
-            pass: password
+            user: "nodemailerwb@gmail.com",
+            pass: "cPAtwgjr8BE5pOaZ"
         }
     });
 
@@ -348,13 +353,13 @@ function sendAccountDetails(email, username, pass) {
         text: `Dear ${username}, you have registered in the Doobki's Wish List. Your login is "${email}", your password is "${pass}". Don't lose them`
     };
 
-    transporter.sendMail(mailDetails, function (err, data) {
-        if (err) {
-            console.log('Error Occurs');
-        } else {
-            console.log('Email sent successfully');
-        }
-    })
+    // transporter.sendMail(mailDetails, function (err, data) {
+    //     if (err) {
+    //         console.log('Error Occurs');
+    //     } else {
+    //         console.log('Email sent successfully');
+    //     }
+    // })
 }
 
 

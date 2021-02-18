@@ -63,7 +63,7 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
                                                     .then(data => store.dispatch(setUsersAction(data)))
                                             }} />
 
-                                        <Button style={{ marginLeft:"20px", marginTop: "10px" }}
+                                        {/* <Button style={{ marginLeft:"20px", marginTop: "10px" }}
                                             basic
                                             size="mini"
                                             color="green"
@@ -78,7 +78,7 @@ class SingleWish extends React.Component<SingleWishProps & PropsFromState> {
                                                     headers: { "Content-Type": "application/json" },
                                                 }).then(response => response.json())
                                                     .then(data => store.dispatch(setUsersAction(data)))
-                                            }} />
+                                            }} /> */}
                                     </>
                                 }
                             </Item.Content>

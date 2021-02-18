@@ -4,7 +4,7 @@ import AccountPage from './components/AccountPage';
 import FriendsPage from './components/FriendsPage';
 import WishesPage from './components/WishesPage'
 import 'semantic-ui-css/semantic.min.css'
-import { Segment } from 'semantic-ui-react';
+import { Loader, Segment } from 'semantic-ui-react';
 import LoginPage from './components/LoginPage';
 import { connect } from 'react-redux';
 import { LoggedInUser, StateInterface } from './types';
@@ -23,12 +23,16 @@ interface AppProps {
 }
 
 class App extends React.Component<AppProps & RouteComponentProps> {
-
+    state = {
+        isLoad: false
+    }
+    
     componentDidMount() {
         fetch(getFriendsListUtl)
             .then(response => response.json())
             .then(data => {
                 store.dispatch(setUsersAction(data))
+                this.setState({isLoad: true})
                 console.log(store.getState())
             })
             
@@ -53,9 +57,12 @@ class App extends React.Component<AppProps & RouteComponentProps> {
 
     render() {
         const { history, loggedInStatus } = this.props
+        const {isLoad} = this.state
         return (
             <>
                 <BrowserRouter>
+                <Loader active={isLoad?false:true} />
+                {isLoad &&
                     <Segment>
                         <Switch>
                             <Route history={history} path='/login' render={() =>
@@ -73,6 +80,7 @@ class App extends React.Component<AppProps & RouteComponentProps> {
                             <Redirect from='/' to='/login' />
                         </Switch>
                     </Segment>
+                }
                 </BrowserRouter>
             </>
         )

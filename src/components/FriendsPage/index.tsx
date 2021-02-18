@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Segment } from 'semantic-ui-react';
+import { Loader, Segment, Image } from 'semantic-ui-react';
 import { LoggedInUser, StateInterface, User } from '../../types';
 import Header from '../Header';
 import FriendsBlock from './FriendsBlock';

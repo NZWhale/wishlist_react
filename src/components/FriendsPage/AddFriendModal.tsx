@@ -16,6 +16,7 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
     state = {
         isOpen: false,
         username: "",
+        searchButtonClicked: false,
         searchedUser: []
     }
 
@@ -54,6 +55,7 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
 
     render() {
         const { searchedUser } = this.state
+        const { users } = this.props
         const searchedUsersComponent = searchedUser.map((user: User) => (
             <Card>
                 <Card.Content>
@@ -69,10 +71,35 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
                 </Card.Content>
                 <Card.Content extra>
                     <div className='ui two buttons'>
-                        <Button basic 
-                                color='green'
-                                onClick={() => this.sendFriendRequest(user.id)}
-                                >
+                        <Button basic
+                            color='green'
+                            onClick={() => this.sendFriendRequest(user.id)}
+                        >
+                            Send request
+                    </Button>
+                    </div>
+                </Card.Content>
+            </Card>
+        ))
+        const allUsers = users.map((user: User) => (
+            <Card>
+                <Card.Content>
+                    <Image
+                        floated='right'
+                        size='mini'
+                        src={user.image ? user.image : noImage}
+                    />
+                    <Card.Header>{user.username}</Card.Header>
+                    <Card.Meta>{user.dayOfBirth ? user.dayOfBirth : ""}</Card.Meta>
+                    <Card.Description>
+                    </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                    <div className='ui two buttons'>
+                        <Button basic
+                            color='green'
+                            onClick={() => this.sendFriendRequest(user.id)}
+                        >
                             Send request
                     </Button>
                     </div>
@@ -90,7 +117,16 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
             >
                 <Modal.Header>Find friends</Modal.Header>
                 <Input
-                    action={<Button color='blue' basic content='Search' onClick={() => this.getSearchedUsers()} />}
+                    action={
+                        <Button
+                            color='blue'
+                            basic
+                            content='Search'
+                            onClick={() => {
+                                this.getSearchedUsers()
+                                this.setState({ searchButtonClicked: !this.state.searchButtonClicked })
+                            }}
+                        />}
                     icon='users'
                     style={{ marginLeft: "17px", marginTop: "12px" }}
                     iconPosition='left'
@@ -102,13 +138,19 @@ class AddFriendsModal extends React.Component<AddFriendsProps> {
                 />
                 <Modal.Content image>
                     <Card.Group>
-                        {searchedUser ? searchedUsersComponent : ""}
+                        {!this.state.searchButtonClicked &&
+                            allUsers
+                        }
+                        {this.state.searchButtonClicked &&
+                            searchedUser ? searchedUsersComponent : ""
+                        }
                     </Card.Group>
 
                 </Modal.Content>
                 <Modal.Actions>
                     <Button basic negative onClick={() => {
                         this.setState({ isOpen: false })
+                        this.setState({ searchButtonClicked: false})
 
                     }}>
                         Cancel
