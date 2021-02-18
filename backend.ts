@@ -353,13 +353,13 @@ function sendAccountDetails(email, username, pass) {
         text: `Dear ${username}, you have registered in the Doobki's Wish List. Your login is "${email}", your password is "${pass}". Don't lose them`
     };
 
-    // transporter.sendMail(mailDetails, function (err, data) {
-    //     if (err) {
-    //         console.log('Error Occurs');
-    //     } else {
-    //         console.log('Email sent successfully');
-    //     }
-    // })
+    transporter.sendMail(mailDetails, function (err, data) {
+        if (err) {
+            console.log('Error Occurs');
+        } else {
+            console.log('Email sent successfully');
+        }
+    })
 }
 
 
